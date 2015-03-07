@@ -13,6 +13,7 @@ import requests
 PORT = int(os.getenv('VCAP_APP_PORT', 8080))
 EPA_URL = 'http://iaspub.epa.gov/enviro/m_uv?'
 EPA_URL_FORMAT = EPA_URL + 'lat={lat}&lon={lon}'
+CACHE = {}
 
 @route('/')
 def index():
@@ -20,20 +21,28 @@ def index():
 
 @route('/uv')
 def uv():
+    print(CACHE)
     url = EPA_URL_FORMAT.format(lat=request.query.lat, lon=request.query.lon)
+    if url in CACHE:
+        print('Cache hit')
+        return CACHE.get(url)
+
     response = requests.get(url).text
-    index, level = extract_index_level(response)
-    return {'index': index, 'level': level}
+    index, level, desc = extract_index_level_desc(response)
+    results = {'index': index, 'level': level, 'desc': desc}
 
-# <I>New York, NY</I>
+    CACHE[url] = results
+    return results
 
-def extract_index_level(contents):
-    soup = BeautifulSoup(html_doc)
+def extract_index_level_desc(contents):
+    soup = BeautifulSoup(contents)
     content = soup.find(id="content")
     uv_index_line = content.b
-    image_url = content.img.attrs['src']
+    img_tag = content.findAll('img')[-1]
+    image_url = img_tag.attrs['src']
+    desc = list(list(img_tag.children)[-1].children)[0]
     index, level = uv_index_level(image_url)
-    return index, level
+    return index, level, desc
 
 def uv_index_level(url):
     """Example url:

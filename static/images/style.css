@@ -1,107 +1,27 @@
-* {
-    box-sizing: border-box;
-}
-
 body {
     font-size: 24px;
-    background: url('/static/images/bg1-1920x1200.jpg') top center;
-    color: white;
 }
-
-hr {
-    border-color: white;
-}
-
 .container {
     max-width: 784px;
     margin: auto auto;
     text-align: center;
     padding-top: 100px;
+    background: url('/static/images/bg1-1920x1080.jpg');
 }
-
 .row {
     min-width: 100%;
 }
-
 .thirds {
     width: 33.3%;
     display: inline-block;
     float: left;
 }
-
-.greet--name {
-    border: 0px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255,255,255,0.0);
-    font-size: 36px;
-    color: white;
-    width: 300px;
-    text-align: center;
-}
-
 .spf {
-}
-
-.spf--index {
     font-size: 256px;
-    margin: 0 0;
 }
-
-.spf--note {
-    margin: 0 0;
+.spf--index {
+    margin:0 0;
 }
-
-.icons-holder {
-}
-
-.reapply {
-    margin-top: 50px;
-}
-
-.reapply--time {
-    font-size: 64px;
-}
-
-.icon {
-    color: blue;
-    width: 168px;
-    height: 168px;
-    margin: auto auto;
-}
-
-.icon--sunglass {
-    background: url('/static/images/20sunglass.png') center center ;
-}
-
-.icon--sunglass.wear {
-    background: url('/static/images/sunglass.png') center center ;
-}
-
-.icon--shirt {
-    background: url('/static/images/20shirt.png') center center ;
-}
-
-.icon--shirt.wear {
-    background: url('/static/images/shirt.png') center center ;
-}
-
-.icon--umbrella {
-    background: url('/static/images/20umbrella.png') center center ;
-}
-
-.icon--umbrella.wear {
-    background: url('/static/images/umbrella.png') center center ;
-}
-
-.icon--cap {
-    background: url('/static/images/20cap.png') center center ;
-}
-
-.icon--cap.wear {
-    background: url('/static/images/cap.png') center center ;
-}
-
-
 /* style.css
  * This file provides css styles.
  */
