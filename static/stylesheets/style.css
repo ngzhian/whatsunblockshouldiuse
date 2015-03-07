@@ -76,39 +76,40 @@ hr {
 
 .icon {
     color: blue;
-    width: 168px;
-    height: 168px;
+    width: 120px;
+    height: 120px;
     margin: auto auto;
+    background-repeat: no-repeat;
 }
 
 .icon--sunglass {
-    background: url('/static/images/20sunglass.png') center center ;
+    background: url('/static/images/20sunglass.png') no-repeat center center ;
 }
 
 .icon--sunglass.wear {
-    background: url('/static/images/sunglass.png') center center ;
+    background: url('/static/images/100sunglass.png') no-repeat center center ;
 }
 
 .icon--shirt {
-    background: url('/static/images/20shirt.png') center center ;
+    background: url('/static/images/20shirt.png') no-repeat center center ;
 }
 
 .icon--shirt.wear {
-    background: url('/static/images/shirt.png') center center ;
+    background: url('/static/images/100shirt.png') no-repeat center center ;
 }
 
 .icon--umbrella {
-    background: url('/static/images/20umbrella.png') center center ;
+    background: url('/static/images/20umbrella.png') no-repeat center center ;
 }
 
 .icon--umbrella.wear {
-    background: url('/static/images/umbrella.png') center center ;
+    background: url('/static/images/100umbrella.png') no-repeat center center ;
 }
 
 .icon--cap {
-    background: url('/static/images/20cap.png') center center ;
+    background: url('/static/images/20cap.png') no-repeat center center ;
 }
 
 .icon--cap.wear {
-    background: url('/static/images/cap.png') center center ;
+    background: url('/static/images/100cap.png') no-repeat center center ;
 }
