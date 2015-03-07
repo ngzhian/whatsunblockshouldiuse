@@ -3,12 +3,54 @@
 <head>
     <title>Python Starter Application</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link rel="stylesheet" href="stylesheets/style.css" />
+    <link rel="stylesheet" href="static/stylesheets/style.css" />
+    <script>
+        if ("geolocation" in navigator) {
+          /* geolocation is available */
+            navigator.geolocation.getCurrentPosition(function(position) {
+                document.getElementById('position').textContent = position.coords.latitude + '' + position.coords.longitude;
+                uv(position.coords);
+            });
+        } else {
+                document.getElementById('position').textContent = 'no';
+        }
+
+        function uv(coords) {
+            // http://iaspub.epa.gov/enviro/m_uv?lat=40.71&lon=-74.01
+            var request = new XMLHttpRequest();
+            request.open('GET', '/uv?lat=' + coords.latitude + '&lon=' + coords.longitude, true);
+
+            request.onload = function() {
+              if (request.status >= 200 && request.status < 400) {
+                // Success!
+                var resp = request.responseText;
+              } else {
+                // We reached our target server, but it returned an error
+
+              }
+            };
+
+            request.onerror = function() {
+              // There was a connection error of some sort
+            };
+
+            request.send();
+        }
+        // because of CORs we call GET passing the location 
+        // scale long and lang to 2dp
+        // make call to url
+        // scrape the city + state,
+        // scare the image and get url
+        // from url get index
+        // grab the description
+        // find useful keyword we can have icons for
+    </script>
 </head>
 <body>
+    <h2 id="position"></h2>
     <table>
         <tr>
-            <td style='width: 30%;'><img src='images/newapp-icon.png'>
+            <td style='width: 30%;'><img src='static/images/newapp-icon.png'>
             </td>
             <td>
                 <h1 id = "message">Hello World, whatsunblockshouldiuse?</h1>
