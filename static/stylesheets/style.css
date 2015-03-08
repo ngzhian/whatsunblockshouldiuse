@@ -1,11 +1,11 @@
 @font-face {
-    font-family: 'BebasNeue Regular';
-    src: url("/static/BebasNeue Regular.otf") format("opentype");
+    font-family: 'RobotoSlab-Regular';
+    src: url("/static/RobotoSlab-Regular.ttf") format('truetype');
 }
 
 @font-face {
-    font-family: 'Roboto';
-    src: url("http://fonts.googleapis.com/css?family=Roboto") format('opentype');
+    font-family: 'BebasNeue Regular';
+    src: url("/static/BebasNeue Regular.otf") format("opentype");
 }
 
 * {
@@ -16,7 +16,7 @@ body {
     font-size: 24px;
     background: url('/static/images/bg1-1920x1200.jpg') top center;
     color: white;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'RobotoSlab-Regular', sans-serif;
 }
 
 hr {
@@ -24,7 +24,7 @@ hr {
 }
 
 .container {
-    max-width: 784px;
+    max-width: 480px;
     margin: auto auto;
     text-align: center;
     padding-top: 64px;

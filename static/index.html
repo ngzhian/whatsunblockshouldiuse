@@ -4,131 +4,13 @@
     <title>Python Starter Application</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" href="static/stylesheets/style.css" />
-
-    <script>
-        if ("geolocation" in navigator) {
-          /* geolocation is available */
-            navigator.geolocation.getCurrentPosition(function(position) {
-                document.getElementById('position').textContent = position.coords.latitude + '' + position.coords.longitude;
-                uv(position.coords);
-            });
-        } else {
-                document.getElementById('position').textContent = 'no';
-        }
-
-        function to2dp(num) {
-            return Math.round(num * 100) / 100;
-        }
-
-        function uv(coords) {
-            // http://iaspub.epa.gov/enviro/m_uv?lat=40.71&lon=-74.01
-            var request = new XMLHttpRequest();
-            request.open(
-                'GET',
-                '/uv?lat=' + to2dp(coords.latitude) + '&lon=' + to2dp(coords.longitude),
-                true);
-
-            request.onload = function() {
-              if (request.status >= 200 && request.status < 400) {
-                // Success!
-                var data = JSON.parse(request.responseText);
-                console.log(data);
-                window.data = data;
-                document.getElementById('uv-level').textContent = data.level;
-                document.getElementById('uv-index').textContent = data.index;
-                document.getElementById('uv-desc').textContent = data.desc;
-                protectYourSkin(parseInt(data.index))
-              } else {
-                // We reached our target server, but it returned an error
-
-              }
-            };
-
-            request.onerror = function() {
-              // There was a connection error of some sort
-            };
-
-            request.send();
-        }
-            function unwearAll() {
-                icons = ['cap', 'sunglass', 'shirt', 'umbrella'];
-                icons.forEach(function(item) {
-                    strip(item);
-                })
-            }
-
-            function wear(item) {
-                icon = document.getElementsByClassName('icon--' + item)[0];
-                icon.classList.add('wear');
-            }
-            function strip(item) {
-                icon = document.getElementsByClassName('icon--' + item)[0];
-                icon.classList.remove('wear');
-            }
-
-            function noop() {}
-
-            function partial(fn, args) {
-                return function() {(fn.apply(this, args))};
-            }
-
-            function wearCap() { wear('cap') }
-
-            function wearSunglass() { wear('sunglass') }
-
-            function wearShirt() { wear('shirt') }
-
-            function wearUmbrella() { wear('umbrella') }
-
-            function spf15() {
-                console.log('spf 15');
-                spfIndex = document.getElementsByClassName('spf--index')[0];
-                spfIndex.textContent = 15;
-            }
-
-            function spf30() {
-                spfIndex = document.getElementsByClassName('spf--index')[0];
-                spfIndex.textContent = 30;
-            }
-
-            function protectYourSkin(index) {
-                console.debug('Protecting your skin against level: ' + index)
-                unwearAll();
-                actions = [
-                    [spf15],
-                    [spf15],
-                    [spf15],
-                    [spf15, wearCap],
-                    [spf15, wearCap],
-                    [spf15, wearCap],
-                    [spf15, wearCap],
-                    [spf30, wearCap, wearSunglass],
-                    [spf30, wearCap, wearSunglass],
-                    [spf30, wearCap, wearSunglass],
-                    [spf30, wearCap, wearSunglass, wearShirt, wearUmbrella],
-                ]
-                index = Math.min(10, index);
-                actions[index].forEach(function(fn) {
-                    fn();
-                })
-            }
-
-            function demo() {
-                var indices = [0, 3, 7, 10];
-                var counter = 0;
-                setInterval(function() {
-                    if (counter >= indices.length) counter = 0;
-                    protectYourSkin(indices[counter++]);
-                }, 1500);
-            }
-    </script>
 </head>
 <body>
 <section class="container">
     <div class="row greet">
         <h1>
             <div class="greet--front">
-                Good <span clas="greet--time">Morning</span>,
+                Good <span class="greet--time">Morning</span>,
             </div>
             <div class="greet--back">
                 <input class="greet--name" type="text" placeholder="lovely." autofocus>
@@ -138,8 +20,12 @@
 
     <hr/>
 
+    <div>
+        You should use
+    </div>
+
     <div class="spf">
-        <p class="spf--index">15</p>
+        <p class="spf--index">--</p>
         <p class="spf--note">
         <div class="row">Recommended</span>
         <div class="row">SPF level</span>
@@ -175,5 +61,133 @@
     <div id="uv-index" style='width: 30%; display: none;'></div>
     <div id="uv-desc" style='width: 30%; display: none;'></div>
 </section>
+<script>
+    if ("geolocation" in navigator) {
+      /* geolocation is available */
+        navigator.geolocation.getCurrentPosition(function(position) {
+            document.getElementById('position').textContent = position.coords.latitude + '' + position.coords.longitude;
+            uv(position.coords);
+        });
+    } else {
+            document.getElementById('position').textContent = 'no';
+    }
+
+    (function greeting() {
+        function timing() {
+            d = (new Date()).getHours();
+            if (d < 12) return 'Morning';
+            if (d < 17) return 'Afternoon';
+            return 'Evening';
+        }
+        console.log(timing());
+        document.getElementsByClassName('greet--time')[0].textContent = timing();
+    })();
+
+    function to2dp(num) {
+        return Math.round(num * 100) / 100;
+    }
+
+    function uv(coords) {
+        // http://iaspub.epa.gov/enviro/m_uv?lat=40.71&lon=-74.01
+        var request = new XMLHttpRequest();
+        request.open(
+            'GET',
+            '/uv?lat=' + to2dp(coords.latitude) + '&lon=' + to2dp(coords.longitude),
+            true);
+
+        request.onload = function() {
+          if (request.status >= 200 && request.status < 400) {
+            // Success!
+            var data = JSON.parse(request.responseText);
+            console.log(data);
+            window.data = data;
+            document.getElementById('uv-level').textContent = data.level;
+            document.getElementById('uv-index').textContent = data.index;
+            document.getElementById('uv-desc').textContent = data.desc;
+            protectYourSkin(parseInt(data.index))
+          } else {
+            // We reached our target server, but it returned an error
+
+          }
+        };
+
+        request.onerror = function() {
+          // There was a connection error of some sort
+        };
+
+        request.send();
+    }
+        function unwearAll() {
+            icons = ['cap', 'sunglass', 'shirt', 'umbrella'];
+            icons.forEach(function(item) {
+                strip(item);
+            })
+        }
+
+        function wear(item) {
+            icon = document.getElementsByClassName('icon--' + item)[0];
+            icon.classList.add('wear');
+        }
+        function strip(item) {
+            icon = document.getElementsByClassName('icon--' + item)[0];
+            icon.classList.remove('wear');
+        }
+
+        function noop() {}
+
+        function partial(fn, args) {
+            return function() {(fn.apply(this, args))};
+        }
+
+        function wearCap() { wear('cap') }
+
+        function wearSunglass() { wear('sunglass') }
+
+        function wearShirt() { wear('shirt') }
+
+        function wearUmbrella() { wear('umbrella') }
+
+        function spf15() {
+            console.log('spf 15');
+            spfIndex = document.getElementsByClassName('spf--index')[0];
+            spfIndex.textContent = 15;
+        }
+
+        function spf30() {
+            spfIndex = document.getElementsByClassName('spf--index')[0];
+            spfIndex.textContent = 30;
+        }
+
+        function protectYourSkin(index) {
+            console.debug('Protecting your skin against level: ' + index)
+            unwearAll();
+            actions = [
+                [spf15],
+                [spf15],
+                [spf15],
+                [spf15, wearCap],
+                [spf15, wearCap],
+                [spf15, wearCap],
+                [spf15, wearCap],
+                [spf30, wearCap, wearSunglass],
+                [spf30, wearCap, wearSunglass],
+                [spf30, wearCap, wearSunglass],
+                [spf30, wearCap, wearSunglass, wearShirt, wearUmbrella],
+            ]
+            index = Math.min(10, index);
+            actions[index].forEach(function(fn) {
+                fn();
+            })
+        }
+
+        function demo() {
+            var indices = [0, 3, 7, 10];
+            var counter = 0;
+            setInterval(function() {
+                if (counter >= indices.length) counter = 0;
+                protectYourSkin(indices[counter++]);
+            }, 1500);
+        }
+</script>
 </body>
 </html>
