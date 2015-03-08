@@ -4,6 +4,6 @@ applications:
   host: whatsunblockshouldiuse
   name: whatsunblockshouldiuse
   path: .
-  domain: mybluemix.net
+  domain: eu-gb.mybluemix.net
   instances: 1
   memory: 128M
