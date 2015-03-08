@@ -1,5 +1,6 @@
 import re
 import os
+import json
 
 from io import StringIO
 
@@ -11,6 +12,17 @@ import requests
 
 # Read port selected by the cloud for our application
 PORT = int(os.getenv('VCAP_APP_PORT', 8080))
+
+if os.getenv("VCAP_SERVICES"):
+    services = json.loads(os.getenv("VCAP_SERVICES"))
+    service_name = 'question_and_answer';
+    if services and services[service_name]:
+        svc = services[service_name][0]['credentials'];
+        svc_url = svc['url']
+        svc_username = svc['username'];
+        svc_password = svc['password'];
+        print(svc_url, svc_username, svc_password)
+
 EPA_URL = 'http://iaspub.epa.gov/enviro/m_uv?'
 EPA_URL_FORMAT = EPA_URL + 'lat={lat}&lon={lon}'
 CACHE = {}
@@ -33,6 +45,14 @@ def uv():
 
     CACHE[url] = results
     return results
+
+@route('/ask')
+def ask():
+    question = request.forms.get('ask') or request.query.get('ask')
+    if not question:
+        return {}
+    answer = ask_watson(question)
+    return {'answer': answer}
 
 def extract_index_level_desc(contents):
     soup = BeautifulSoup(contents)
@@ -63,6 +83,24 @@ def get_location_text(uv_index_line):
 @route('/static/<filepath:path>')
 def server_static(filepath):
     return static_file(filepath, root='static')
+
+def ask_watson(question):
+    question = question.strip()
+    USERNAME = 'd83e357f-9b61-4bcb-b44b-46f934606d12'
+    PASSWORD = 'aIpNYMrmSIup'
+    URL = 'https://gateway.watsonplatform.net/question-and-answer-beta/api/v1/question/healthcare'
+
+    print('Asking watson', question)
+
+    response = requests.post(
+        URL,
+        json={'question': {'questionText': question}},
+        headers={
+            'Accept': 'application/json',
+            'X-SyncTimeout': 30,
+        },
+        auth=(USERNAME, PASSWORD))
+    return response.json()
 
 if __name__ == '__main__':
     run(host='0.0.0.0', port=PORT, debug=True, reloader=True)

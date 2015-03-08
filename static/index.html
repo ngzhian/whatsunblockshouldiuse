@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Python Starter Application</title>
+    <title>What Sunblock Should I Use?</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="static/stylesheets/style.css" />
+
+    <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-<section class="container">
+<div class="container">
     <div class="row greet">
         <h1>
             <div class="greet--front">
-                Good <span class="greet--time">Morning</span>,
+                Did you know...
             </div>
             <div class="greet--back">
-                <input class="greet--name" type="text" placeholder="lovely." autofocus>
+                <p id="didYouKnowText"></p>
             </div>
         </h1>
     </div>
@@ -56,11 +61,47 @@
         </div>
     </div>
 
+    <div class="row">
+        <form id="askWatson" method="get" action="/ask">
+            <input type="text" name="ask" id="question" placeholder="Ask Watson" autofocus>
+            <input type="submit" value="Search">
+        </form>
+    </div>
+
     <h2 id="position" style='display: none;'></h2>
     <div id="uv-level" style='width: 30%; display: none;'></div>
     <div id="uv-index" style='width: 30%; display: none;'></div>
     <div id="uv-desc" style='width: 30%; display: none;'></div>
-</section>
+
+    <div class="modal fade" id="answerModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Watson says...</h4>
+          </div>
+          <div class="modal-body">
+            <div id="answerModalLoader">
+                <div class="preloader loading">
+                  <span class="slice"></span>
+                  <span class="slice"></span>
+                  <span class="slice"></span>
+                  <span class="slice"></span>
+                  <span class="slice"></span>
+                  <span class="slice"></span>
+                </div>
+            </div>
+            <ol id="answerList">
+            </ol>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
 <script>
     if ("geolocation" in navigator) {
       /* geolocation is available */
@@ -71,17 +112,6 @@
     } else {
             document.getElementById('position').textContent = 'no';
     }
-
-    (function greeting() {
-        function timing() {
-            d = (new Date()).getHours();
-            if (d < 12) return 'Morning';
-            if (d < 17) return 'Afternoon';
-            return 'Evening';
-        }
-        console.log(timing());
-        document.getElementsByClassName('greet--time')[0].textContent = timing();
-    })();
 
     function to2dp(num) {
         return Math.round(num * 100) / 100;
@@ -117,77 +147,113 @@
 
         request.send();
     }
-        function unwearAll() {
-            icons = ['cap', 'sunglass', 'shirt', 'umbrella'];
-            icons.forEach(function(item) {
-                strip(item);
+    function unwearAll() {
+        icons = ['cap', 'sunglass', 'shirt', 'umbrella'];
+        icons.forEach(function(item) {
+            strip(item);
+        })
+    }
+
+    function wear(item) {
+        icon = document.getElementsByClassName('icon--' + item)[0];
+        icon.classList.add('wear');
+    }
+    function strip(item) {
+        icon = document.getElementsByClassName('icon--' + item)[0];
+        icon.classList.remove('wear');
+    }
+
+    function noop() {}
+
+    function partial(fn, args) {
+        return function() {(fn.apply(this, args))};
+    }
+
+    function wearCap() { wear('cap') }
+
+    function wearSunglass() { wear('sunglass') }
+
+    function wearShirt() { wear('shirt') }
+
+    function wearUmbrella() { wear('umbrella') }
+
+    function spf15() {
+        console.log('spf 15');
+        spfIndex = document.getElementsByClassName('spf--index')[0];
+        spfIndex.textContent = 15;
+    }
+
+    function spf30() {
+        spfIndex = document.getElementsByClassName('spf--index')[0];
+        spfIndex.textContent = 30;
+    }
+
+    function protectYourSkin(index) {
+        console.debug('Protecting your skin against level: ' + index)
+        unwearAll();
+        actions = [
+            [spf15],
+            [spf15],
+            [spf15],
+            [spf15, wearCap],
+            [spf15, wearCap],
+            [spf15, wearCap],
+            [spf15, wearCap],
+            [spf30, wearCap, wearSunglass],
+            [spf30, wearCap, wearSunglass],
+            [spf30, wearCap, wearSunglass],
+            [spf30, wearCap, wearSunglass, wearShirt, wearUmbrella],
+        ]
+        index = Math.min(10, index);
+        actions[index].forEach(function(fn) {
+            fn();
+        })
+    }
+
+    (function showDidYouKnow() {
+        var didYouKnow = [
+            "If the clouds are thick, it block some UV radiation from reaching the ground.",
+            "You can still get sun burned during winter!",
+            "In police forensics, UV light can be used with special powder to solve crimes!",
+            "UV rays can cause skin to burn if taken in excess.",
+            "UV Index serves as an indicator of the intensity of the sun each day.",
+            "The particles in sunscreens provide physical protection against UV rays.",
+            "SPF stands for Sun Protection Factor.",
+            "Higher SPFs may not actually provide longer hours of protection.",
+            "You need a column of one shot glass worth of sunblock to cover the body.",
+            "You should apply sunblock 15 minutes before going outdoors.",
+            "Believe it or not, a higher SPF rating isn’t necessarily better. Complete coverage is more important.  SPF 50 blocks 98% of UV rays while SPF 100 blocks 99% of UV ray.",
+        ]
+
+        var max = didYouKnow.length;
+        idx = Math.floor(Math.random() * (max + 1));
+        document.getElementById('didYouKnowText').textContent = didYouKnow[idx];
+    })();
+
+    function demo() {
+        var indices = [0, 3, 7, 10];
+        var counter = 0;
+        setInterval(function() {
+            if (counter >= indices.length) counter = 0;
+            protectYourSkin(indices[counter++]);
+        }, 1500);
+    }
+
+    $('#askWatson').on('submit', function(e) {
+        $('#answerModal').modal('show')
+        e.preventDefault();
+        console.log($('#question').val())
+        $.get('/ask', {'ask': $('#question').val()}).done(function(response) {
+            $('#answerModalLoader').hide();
+            data = response.answer
+            if (!data) return;
+            var answer = data[0].question.answers;
+            var list = $('#answerList');
+            answer.forEach(function(a) {
+                list.append('<li>' + a.text + '</li>')
             })
-        }
-
-        function wear(item) {
-            icon = document.getElementsByClassName('icon--' + item)[0];
-            icon.classList.add('wear');
-        }
-        function strip(item) {
-            icon = document.getElementsByClassName('icon--' + item)[0];
-            icon.classList.remove('wear');
-        }
-
-        function noop() {}
-
-        function partial(fn, args) {
-            return function() {(fn.apply(this, args))};
-        }
-
-        function wearCap() { wear('cap') }
-
-        function wearSunglass() { wear('sunglass') }
-
-        function wearShirt() { wear('shirt') }
-
-        function wearUmbrella() { wear('umbrella') }
-
-        function spf15() {
-            console.log('spf 15');
-            spfIndex = document.getElementsByClassName('spf--index')[0];
-            spfIndex.textContent = 15;
-        }
-
-        function spf30() {
-            spfIndex = document.getElementsByClassName('spf--index')[0];
-            spfIndex.textContent = 30;
-        }
-
-        function protectYourSkin(index) {
-            console.debug('Protecting your skin against level: ' + index)
-            unwearAll();
-            actions = [
-                [spf15],
-                [spf15],
-                [spf15],
-                [spf15, wearCap],
-                [spf15, wearCap],
-                [spf15, wearCap],
-                [spf15, wearCap],
-                [spf30, wearCap, wearSunglass],
-                [spf30, wearCap, wearSunglass],
-                [spf30, wearCap, wearSunglass],
-                [spf30, wearCap, wearSunglass, wearShirt, wearUmbrella],
-            ]
-            index = Math.min(10, index);
-            actions[index].forEach(function(fn) {
-                fn();
-            })
-        }
-
-        function demo() {
-            var indices = [0, 3, 7, 10];
-            var counter = 0;
-            setInterval(function() {
-                if (counter >= indices.length) counter = 0;
-                protectYourSkin(indices[counter++]);
-            }, 1500);
-        }
+        })
+    })
 </script>
 </body>
 </html>
