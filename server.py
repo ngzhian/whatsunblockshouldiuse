@@ -84,6 +84,10 @@ def get_location_text(uv_index_line):
 def server_static(filepath):
     return static_file(filepath, root='static')
 
+@route('/favicon.ico')
+def favicon():
+    return static_file('favicon.ico', root='')
+
 def ask_watson(question):
     question = question.strip()
     USERNAME = 'd83e357f-9b61-4bcb-b44b-46f934606d12'
