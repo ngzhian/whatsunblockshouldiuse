@@ -59,6 +59,10 @@ hr {
     margin: 0 0;
 }
 
+#locationLoading {
+    margin: 160px 0;
+}
+
 .icons-holder {
 }
 

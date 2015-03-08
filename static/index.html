@@ -30,8 +30,10 @@
         You should use
     </div>
 
+    <p id="locationLoading">Getting your location...</p>
+
     <div class="spf">
-        <p class="spf--index">--</p>
+        <p class="spf--index"></p>
     </div>
 
     <div class="row">Recommended</span>
@@ -130,7 +132,6 @@
             // Success!
             var data = JSON.parse(request.responseText);
             console.log(data);
-            window.data = data;
             document.getElementById('uv-level').textContent = data.level;
             document.getElementById('uv-index').textContent = data.index;
             document.getElementById('uv-desc').textContent = data.desc;
@@ -177,16 +178,18 @@
 
     function wearUmbrella() { wear('umbrella') }
 
-    function spf15() {
-        console.log('spf 15');
-        spfIndex = document.getElementsByClassName('spf--index')[0];
-        spfIndex.textContent = 15;
+    function spf(index) {
+        $('#locationLoading').fadeOut(function() {
+            spfIndex = document.getElementsByClassName('spf--index')[0];
+            spfIndex.textContent = index;
+            $('.spf--index').fadeIn();
+        });
     }
 
-    function spf30() {
-        spfIndex = document.getElementsByClassName('spf--index')[0];
-        spfIndex.textContent = 30;
-    }
+    function spf15() { spf(15) }
+
+    function spf30() { spf(30) }
+
 
     function protectYourSkin(index) {
         console.debug('Protecting your skin against level: ' + index)
